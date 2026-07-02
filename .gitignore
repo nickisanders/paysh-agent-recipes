@@ -1,0 +1,17 @@
+# Env / secrets
+*.env
+.env
+.env.*
+whale-watcher.env
+
+# Runtime state
+.whale-watcher/
+*.seen
+*.log
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

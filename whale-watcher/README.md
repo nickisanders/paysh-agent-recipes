@@ -1,0 +1,90 @@
+# 🐋 Whale Watcher
+
+Monitor any wallet and get an **SMS the moment a whale-sized transaction lands**.
+
+The script asks [Heurist Mesh](https://mesh.heurist.ai/) for the wallet's recent
+on-chain activity through [`pay claude`](https://pay.sh) — paid per request over
+pay.sh with USDC, **no API keys or accounts** — and fires a
+[Twilio](https://www.twilio.com/) text when a transfer at or above your USD
+threshold shows up. Runs on a cron, dedupes so the same transaction never pages
+you twice, and stays silent when nothing qualifies.
+
+📎 **X thread:** _(link coming soon)_
+
+---
+
+## What it does
+
+1. Queries Heurist Mesh via `pay claude` for recent transactions of `WATCH_WALLET`.
+2. Parses the JSON response with `jq` and keeps transfers `>= THRESHOLD_USD`.
+3. Sends a Twilio SMS for each new whale (tracked in a state file, so no repeats).
+4. Exits quietly with no alert when the response has nothing over the threshold —
+   no false alarms.
+
+## Prerequisites
+
+- **pay CLI** — install and fund it once. See the pay.sh setup guide:
+  <https://pay.sh> (this is what powers `pay claude`; no API keys needed, you just
+  fund a wallet with USDC and pay per request).
+- **jq** — JSON parsing. `brew install jq` (macOS) or `apt-get install jq` (Linux).
+- **curl** — ships with macOS and most Linux distros.
+- **A Twilio account** with an SMS-capable phone number.
+
+## Environment variables
+
+| Variable | Description |
+|---|---|
+| `TWILIO_ACCOUNT_SID` | Your Twilio Account SID |
+| `TWILIO_AUTH_TOKEN` | Your Twilio Auth Token |
+| `TWILIO_FROM` | Twilio phone number to send from, E.164 (e.g. `+14155550100`) |
+| `ALERT_TO` | Number to text the alert to, E.164 (e.g. `+14155550123`) |
+| `WATCH_WALLET` | Wallet address to monitor |
+| `THRESHOLD_USD` | Minimum transaction size (USD) that triggers an alert, e.g. `50000` |
+| `STATE_DIR` | _(optional)_ Where seen-tx hashes are stored. Default: `~/.whale-watcher` |
+
+## How to run
+
+```bash
+export TWILIO_ACCOUNT_SID="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+export TWILIO_AUTH_TOKEN="your_auth_token"
+export TWILIO_FROM="+14155550100"
+export ALERT_TO="+14155550123"
+export WATCH_WALLET="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+export THRESHOLD_USD="50000"
+
+./whale-watcher.sh
+```
+
+The first run may print `No transaction >= $50000 found. Staying quiet.` — that's
+the expected quiet path. When a whale hits, you get a text like:
+
+```
+🐋 Whale alert: 0xd8dA…6045 out $125000 in WETH (counterparty 0x9999…). tx 0xabc123de…
+```
+
+## Set up the cron
+
+Check every 5 minutes. Put your `export`s in a small env file so cron has them:
+
+```bash
+# ~/whale-watcher.env
+export TWILIO_ACCOUNT_SID="AC..."
+export TWILIO_AUTH_TOKEN="..."
+export TWILIO_FROM="+14155550100"
+export ALERT_TO="+14155550123"
+export WATCH_WALLET="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+export THRESHOLD_USD="50000"
+```
+
+Then add the job with `crontab -e`:
+
+```cron
+*/5 * * * * . $HOME/whale-watcher.env && /path/to/whale-watcher/whale-watcher.sh >> $HOME/whale-watcher.log 2>&1
+```
+
+Logs go to `~/whale-watcher.log`; alerted transaction hashes are remembered in
+`~/.whale-watcher/` so a whale is only texted once.
+
+> **Cost note:** each run makes one `pay claude` request (a few fractions of a
+> cent in USDC). A `*/5` schedule is ~288 requests/day — tune the interval and
+> your pay.sh balance to taste.
