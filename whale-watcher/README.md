@@ -13,6 +13,23 @@ you twice, and stays silent when nothing qualifies.
 
 ---
 
+## Try it instantly (no setup)
+
+Want to see it work before installing `pay` or configuring Twilio? Run the demo:
+
+```bash
+DRY_RUN=1 ./whale-watcher.sh
+```
+
+This feeds the script the canned [`example-response.json`](./example-response.json)
+instead of calling `pay`, and **prints the SMS it would send** instead of texting.
+No `pay`, no Twilio, no cost. Tweak the threshold to see the filter work:
+
+```bash
+DRY_RUN=1 THRESHOLD_USD=100 ./whale-watcher.sh      # catches all 3 sample txs
+DRY_RUN=1 THRESHOLD_USD=5000000 ./whale-watcher.sh  # catches none — stays quiet
+```
+
 ## What it does
 
 1. Queries Heurist Mesh via `pay claude` for recent transactions of `WATCH_WALLET`.
@@ -56,11 +73,32 @@ export THRESHOLD_USD="50000"
 ```
 
 The first run may print `No transaction >= $50000 found. Staying quiet.` — that's
-the expected quiet path. When a whale hits, you get a text like:
+the expected quiet path.
+
+## What you'll see
+
+Given a Heurist Mesh response like [`example-response.json`](./example-response.json):
+
+```json
+{
+  "transactions": [
+    { "hash": "0x8f2e…5e8f", "usd_value": 3240000.0, "token": "WETH",
+      "direction": "out", "counterparty": "0x28C6…1d60", "timestamp": "2026-07-02T14:32:10Z" },
+    { "hash": "0xdead…aabb", "usd_value": 118.42, "token": "USDC",
+      "direction": "out", "counterparty": "0x5a52…Efcb", "timestamp": "2026-07-02T12:58:01Z" }
+  ]
+}
+```
+
+...with `THRESHOLD_USD=1000000`, the $3.24M transfer fires a text and the $118 one
+is ignored:
 
 ```
-🐋 Whale alert: 0xd8dA…6045 out $125000 in WETH (counterparty 0x9999…). tx 0xabc123de…
+🐋 Whale alert: 0xd8dA…6045 out $3240000 in WETH (counterparty 0x28C6…). tx 0x8f2e5b1a…
 ```
+
+Each transaction is texted only once — its hash is recorded in the state file, so
+the next cron run won't re-alert on the same whale.
 
 ## Set up the cron
 

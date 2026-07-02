@@ -9,6 +9,10 @@
 # It keeps a small state file of already-alerted transaction hashes so the same
 # whale never pages you twice, and stays silent when nothing qualifies.
 #
+# Try it with zero setup:  DRY_RUN=1 ./whale-watcher.sh
+#   Feeds the script the canned example-response.json instead of calling pay,
+#   and prints the SMS it *would* send instead of texting. No pay/Twilio needed.
+#
 set -euo pipefail
 
 # --- Config ------------------------------------------------------------------
@@ -17,9 +21,14 @@ set -euo pipefail
 #   WATCH_WALLET  THRESHOLD_USD
 #
 # Optional:
-#   STATE_DIR   where seen-tx hashes are stored (default: ~/.whale-watcher)
+#   STATE_DIR         where seen-tx hashes are stored (default: ~/.whale-watcher)
+#   DRY_RUN=1         demo mode: use EXAMPLE_RESPONSE, no pay call, print SMS only
+#   EXAMPLE_RESPONSE  canned JSON for DRY_RUN (default: ./example-response.json)
 
 STATE_DIR="${STATE_DIR:-$HOME/.whale-watcher}"
+DRY_RUN="${DRY_RUN:-0}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+EXAMPLE_RESPONSE="${EXAMPLE_RESPONSE:-$SCRIPT_DIR/example-response.json}"
 
 # --- Helpers -----------------------------------------------------------------
 log()  { printf '[whale-watcher] %s\n' "$*" >&2; }
@@ -35,22 +44,35 @@ require_env() {
 }
 
 # --- Preflight ---------------------------------------------------------------
-require_cmd pay
 require_cmd jq
-require_cmd curl
 
-for v in TWILIO_ACCOUNT_SID TWILIO_AUTH_TOKEN TWILIO_FROM ALERT_TO WATCH_WALLET THRESHOLD_USD; do
-  require_env "$v"
-done
+if [ "$DRY_RUN" = "1" ]; then
+  # Demo mode: no pay/Twilio needed. Fill sensible defaults so it runs bare.
+  WATCH_WALLET="${WATCH_WALLET:-0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045}"
+  THRESHOLD_USD="${THRESHOLD_USD:-1000000}"
+  ALERT_TO="${ALERT_TO:-+1XXXXXXXXXX}"
+  log "DRY RUN — reading $EXAMPLE_RESPONSE, no pay call, printing SMS instead of sending."
+else
+  require_cmd pay
+  require_cmd curl
+  for v in TWILIO_ACCOUNT_SID TWILIO_AUTH_TOKEN TWILIO_FROM ALERT_TO WATCH_WALLET THRESHOLD_USD; do
+    require_env "$v"
+  done
+fi
 
 # Validate THRESHOLD_USD is numeric.
 case "$THRESHOLD_USD" in
   ''|*[!0-9.]*) die "THRESHOLD_USD must be a number, got: '$THRESHOLD_USD'" ;;
 esac
 
-mkdir -p "$STATE_DIR"
-SEEN_FILE="$STATE_DIR/${WATCH_WALLET}.seen"
-touch "$SEEN_FILE"
+# Persist seen hashes in live mode; in dry-run use /dev/null so demos repeat.
+if [ "$DRY_RUN" = "1" ]; then
+  SEEN_FILE="/dev/null"
+else
+  mkdir -p "$STATE_DIR"
+  SEEN_FILE="$STATE_DIR/${WATCH_WALLET}.seen"
+  touch "$SEEN_FILE"
+fi
 
 # --- Query Heurist Mesh via pay claude ---------------------------------------
 # We ask for STRICT JSON so the response is machine-parseable. Keep the schema
@@ -69,18 +91,26 @@ no commentary. Use exactly this shape:
 If you cannot find any transactions, respond with {"transactions":[]}.
 EOF
 
-log "Querying Heurist Mesh for ${WATCH_WALLET} ..."
-RAW="$(pay claude -p "$PROMPT" 2>/dev/null || true)"
+if [ "$DRY_RUN" = "1" ]; then
+  [ -f "$EXAMPLE_RESPONSE" ] || die "Example response not found: $EXAMPLE_RESPONSE"
+  RAW="$(cat "$EXAMPLE_RESPONSE")"
+else
+  log "Querying Heurist Mesh for ${WATCH_WALLET} ..."
+  RAW="$(pay claude -p "$PROMPT" 2>/dev/null || true)"
+fi
 
 if [ -z "${RAW//[[:space:]]/}" ]; then
   log "Empty response from pay claude — nothing to do."
   exit 0
 fi
 
-# Extract the JSON object even if the model wrapped it in prose or code fences:
-# drop any ``` fence lines, then keep from the first '{' through the last '}'.
-JSON="$(printf '%s' "$RAW" | tr -d '\r' | grep -v '^[[:space:]]*```' \
-  | sed -n '/{/,/}/p' | tr '\n' ' ')"
+# Extract the JSON object even if the model wrapped it in prose or code fences.
+# Drop ``` fence lines, then trim everything before the first '{' and after the
+# last '}'. Parameter expansion keeps internal newlines intact, so multi-line
+# (pretty-printed) JSON survives — jq parses the rest.
+JSON="$(printf '%s' "$RAW" | tr -d '\r' | grep -v '^[[:space:]]*```')"
+JSON="${JSON#"${JSON%%\{*}"}"   # strip any prose before the first '{'
+JSON="${JSON%"${JSON##*\}}"}"   # strip any prose after the last '}'
 
 # Validate it parses; if not, fail safe with no alert.
 if ! printf '%s' "$JSON" | jq -e '.transactions' >/dev/null 2>&1; then
@@ -126,6 +156,13 @@ while IFS= read -r tx; do
   usd_fmt="$(printf '%.0f' "$usd" 2>/dev/null || printf '%s' "$usd")"
 
   body="🐋 Whale alert: ${WATCH_WALLET:0:6}…${WATCH_WALLET: -4} ${direction} \$${usd_fmt} in ${token} (counterparty ${other:0:6}…). tx ${hash:0:10}…"
+
+  if [ "$DRY_RUN" = "1" ]; then
+    log "Whale detected (\$$usd_fmt $token) — would send SMS:"
+    printf 'SMS -> %s: %s\n' "$ALERT_TO" "$body"
+    alerts_sent=$((alerts_sent + 1))
+    continue
+  fi
 
   log "Whale detected (\$$usd_fmt $token). Sending SMS ..."
   http_code="$(curl -sS -o /dev/null -w '%{http_code}' -X POST \

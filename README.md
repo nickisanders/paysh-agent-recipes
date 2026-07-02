@@ -24,9 +24,11 @@ via the x402 protocol. No sign-up, no billing account, no API keys to rotate.
 
 ## Getting started
 
-1. Install and fund the `pay` CLI — see <https://pay.sh>.
-2. Pick a recipe folder and open its `README.md`.
-3. Set the listed environment variables and run the script.
+1. Pick a recipe folder and open its `README.md`.
+2. Most recipes ship a **`DRY_RUN=1`** demo mode with a canned response — run it
+   first to see the workflow end-to-end with no `pay` balance or credentials.
+3. Install and fund the `pay` CLI — see <https://pay.sh>.
+4. Set the listed environment variables and run the script for real.
 
 ## License
 

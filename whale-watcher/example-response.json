@@ -1,0 +1,28 @@
+{
+  "transactions": [
+    {
+      "hash": "0x8f2e5b1a9c4d7e3f6a0b8d2c1e4f7a9b3c6d0e2f5a8b1c4d7e0f3a6b9c2d5e8f",
+      "usd_value": 3240000.0,
+      "token": "WETH",
+      "direction": "out",
+      "counterparty": "0x28C6c06298d514Db089934071355E5743bf21d60",
+      "timestamp": "2026-07-02T14:32:10Z"
+    },
+    {
+      "hash": "0x1a2b3c4d5e6f7081920a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f80",
+      "usd_value": 1512000.0,
+      "token": "USDC",
+      "direction": "in",
+      "counterparty": "0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549",
+      "timestamp": "2026-07-02T13:05:44Z"
+    },
+    {
+      "hash": "0xdeadbeef00112233445566778899aabbccddeeff00112233445566778899aabb",
+      "usd_value": 118.42,
+      "token": "USDC",
+      "direction": "out",
+      "counterparty": "0x5a52E96BAcdaBb82fd05763E25335261B270Efcb",
+      "timestamp": "2026-07-02T12:58:01Z"
+    }
+  ]
+}
