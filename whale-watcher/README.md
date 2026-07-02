@@ -30,6 +30,32 @@ DRY_RUN=1 THRESHOLD_USD=100 ./whale-watcher.sh      # catches all 3 sample txs
 DRY_RUN=1 THRESHOLD_USD=5000000 ./whale-watcher.sh  # catches none — stays quiet
 ```
 
+## End-to-end example
+
+[`example.sh`](./example.sh) is the full integration pattern: it sets the env
+vars, calls `whale-watcher.sh`, **receives the flagged transactions back**, and
+processes them (here, printing a summary — swap in Slack, a webhook, or a DB).
+
+```bash
+./example.sh                     # demo mode, inline defaults
+THRESHOLD_USD=100 ./example.sh   # lower the bar to see all sample txs
+LIVE=1 ./example.sh              # real: needs a funded pay CLI + valid .env
+```
+
+It reads a local `.env` if present (copy [`.env.example`](./.env.example) to
+`.env`), otherwise falls back to demo values. Sample output:
+
+```
+==> Running whale-watcher.sh (watching 0xd8dA…6045, threshold $1000000)
+
+==> Received 2 alert(s):
+
+  • 🐋 Whale alert: 0xd8dA…6045 out $3240000 in WETH (counterparty 0x28C6…). tx 0x8f2e5b1a…
+  • 🐋 Whale alert: 0xd8dA…6045 in $1512000 in USDC (counterparty 0x21a3…). tx 0x1a2b3c4d…
+
+==> Done. Plug this loop into Slack, a webhook, a DB — wherever you route alerts.
+```
+
 ## What it does
 
 1. Queries Heurist Mesh via `pay claude` for recent transactions of `WATCH_WALLET`.
