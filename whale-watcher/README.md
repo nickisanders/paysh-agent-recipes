@@ -9,7 +9,7 @@ pay.sh with USDC, **no API keys or accounts** — and fires a
 threshold shows up. Runs on a cron, dedupes so the same transaction never pages
 you twice, and stays silent when nothing qualifies.
 
-📎 **X thread:** _(link coming soon)_
+📎 **X thread:** <https://x.com/nickisanders/status/2072759755798626603>
 
 ---
 

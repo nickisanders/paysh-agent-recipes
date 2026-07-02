@@ -10,9 +10,9 @@ links to the matching X thread. Clone one, set a few env vars, and run.
 
 ## Recipes
 
-| Recipe | What it does | Stack |
-|---|---|---|
-| [🐋 Whale Watcher](./whale-watcher) | Watches a wallet and SMS-alerts you when a transaction crosses a USD threshold | `pay claude` · Heurist Mesh · Twilio · cron |
+| Recipe | What it does | Stack | Thread |
+|---|---|---|---|
+| [🐋 Whale Watcher](./whale-watcher) | Watches a wallet and SMS-alerts you when a transaction crosses a USD threshold | `pay claude` · Heurist Mesh · Twilio · cron | [X](https://x.com/nickisanders/status/2072759755798626603) |
 
 _More recipes coming — PRs welcome._
 
