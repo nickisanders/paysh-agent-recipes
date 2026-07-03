@@ -1,5 +1,7 @@
 # ⚡ Realtime Whale Watcher
 
+![Realtime Whale Watcher demo](demo.gif)
+
 The low-latency sibling of [Whale Watcher](../whale-watcher). Instead of polling
 on a cron, this is a **long-running process that follows the chain head** and
 fires an alert the instant a whale-sized transfer to/from your wallet lands in a

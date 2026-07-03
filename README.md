@@ -10,6 +10,8 @@ Every recipe is a single script in its own folder, with a `DRY_RUN` demo, an
 example driver, and a README linking its X thread. Clone it, set a few env vars,
 run.
 
+![Realtime Whale Watcher demo](realtime-whale-watcher/demo.gif)
+
 ## Recipes
 
 | Recipe | What it does | Stack | Thread |
