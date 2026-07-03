@@ -1,20 +1,21 @@
 # paysh-agent-recipes
 
-Short, copy-pasteable AI agent workflows built on [**pay.sh**](https://pay.sh) —
-the platform for per-request API micropayments in USDC, with **no API keys and no
-accounts**. Each recipe pays for exactly the calls it makes, right when it makes
-them.
+A library of short, copy-pasteable AI agent workflows that **pay their own way** —
+built on [pay.sh](https://pay.sh), the per-request USDC micropayment layer from
+the Solana Foundation and Google Cloud. No API keys, no accounts, no
+subscriptions: each recipe pays for exactly the calls it makes, right when it
+makes them.
 
-Every recipe lives in its own folder with a working script and a README that
-links to the matching X thread. Clone one, set a few env vars, and run.
+Every recipe is a single script in its own folder, with a `DRY_RUN` demo, an
+example driver, and a README linking its X thread. Clone it, set a few env vars,
+run.
 
 ## Recipes
 
 | Recipe | What it does | Stack | Thread |
 |---|---|---|---|
 | [🐋 Whale Watcher](./whale-watcher) | Watches a wallet and SMS-alerts you when a transaction crosses a USD threshold | `pay claude` · Heurist Mesh · Twilio · cron | [X](https://x.com/nickisanders/status/2072759755798626603) |
-| [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Low-latency sibling: follows the chain head and pushes the instant a whale-sized transfer lands, via Telegram / webhook / websocket / stdout | pay.sh JSON-RPC · block scan · pluggable sinks | [X](https://x.com/nickisanders/status/2073066021926121499) |
-| [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Follows the chain head and alerts within ~one block of a whale-sized transfer (Telegram / webhook / websocket / stdout) | pay.sh JSON-RPC · long-running | _soon_ |
+| [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Low-latency sibling: follows the chain head and pushes within ~one block of a whale-sized transfer, via Telegram / webhook / websocket / stdout | pay.sh JSON-RPC · block scan · pluggable sinks | [X](https://x.com/nickisanders/status/2073066021926121499) |
 
 _More recipes coming — PRs welcome._
 
