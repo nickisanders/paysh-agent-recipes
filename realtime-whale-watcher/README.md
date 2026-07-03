@@ -9,7 +9,7 @@ you're not locked into any one channel.
 It reads on-chain data through [pay.sh](https://pay.sh)'s pay-per-request
 JSON-RPC (140+ chains, no API keys), so you still pay only for the calls you make.
 
-📎 **X thread:** _(link coming soon)_
+📎 **X thread:** <https://x.com/nickisanders/status/2073066021926121499>
 
 ---
 
