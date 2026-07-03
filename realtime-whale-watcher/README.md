@@ -2,8 +2,9 @@
 
 The low-latency sibling of [Whale Watcher](../whale-watcher). Instead of polling
 on a cron, this is a **long-running process that follows the chain head** and
-pushes a **Telegram** alert the instant a whale-sized transfer to/from your
-wallet lands in a new block.
+fires an alert the instant a whale-sized transfer to/from your wallet lands in a
+new block. Deliver it via **Telegram, a webhook, a websocket, or stdout** —
+you're not locked into any one channel.
 
 It reads on-chain data through [pay.sh](https://pay.sh)'s pay-per-request
 JSON-RPC (140+ chains, no API keys), so you still pay only for the calls you make.
@@ -35,13 +36,39 @@ recipe #3.
 2. For each new block, fetches it with full transactions and scans for native
    transfers where `from`/`to` is `WATCH_WALLET`.
 3. Converts each value from wei and keeps anything `>= THRESHOLD_NATIVE`.
-4. Pushes a Telegram message immediately. Records the last-scanned block so a
-   restart resumes cleanly without replaying or missing blocks.
+4. Delivers the alert immediately via your chosen sink. Records the last-scanned
+   block so a restart resumes cleanly without replaying or missing blocks.
 
 > Scope: this watches **native-asset** transfers (ETH, etc.). ERC-20/stablecoin
 > whales live in event logs — add an `eth_getLogs` call on the Transfer topic to
 > cover them. USD thresholds need a price call; kept out of the hot loop on
 > purpose to stay fast and dependency-light.
+
+## Alert transports
+
+Set `ALERT_SINK` to route alerts wherever you want — you're not forced into
+Telegram. Every non-telegram sink emits a machine-readable JSON payload, so your
+**agents** can consume alerts directly:
+
+```json
+{"type":"whale_alert","wallet":"0xd8dA…6045","direction":"in","value":"420.000000",
+ "symbol":"ETH","counterparty":"0x28C6…1d60","tx":"0x8f2e…5e8f","text":"🐋 Whale alert: …"}
+```
+
+| `ALERT_SINK` | Needs | Delivery |
+|---|---|---|
+| `telegram` _(default)_ | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Human message to a chat |
+| `webhook` | `WEBHOOK_URL` | `POST` the JSON payload to your URL |
+| `websocket` | `WS_URL` + [`websocat`](https://github.com/vi/websocat) | Push the JSON payload to a WS endpoint |
+| `stdout` | — | Print the JSON payload (pipe into your agent, `jq`, anything) |
+
+```bash
+# Feed an agent directly, no third-party service:
+ALERT_SINK=stdout ./realtime-whale.sh | your-agent --consume
+
+# Or fan out to your own infra:
+ALERT_SINK=webhook WEBHOOK_URL=https://you.example.com/whale ./realtime-whale.sh
+```
 
 ## Try it instantly (no setup)
 
@@ -72,8 +99,10 @@ LIVE=1 ./example.sh                 # real: needs a funded pay CLI + Telegram bo
 
 - **pay CLI**, installed and funded — <https://pay.sh>.
 - **jq**, **bc**, **curl** — `bc` does the wei bignum math that overflows shell ints.
-- **A Telegram bot** — create one with [@BotFather](https://t.me/BotFather) for the
-  token, and get your chat id from [@userinfobot](https://t.me/userinfobot).
+- **Your chosen sink** — a Telegram bot ([@BotFather](https://t.me/BotFather) for the
+  token, [@userinfobot](https://t.me/userinfobot) for your chat id), a webhook URL,
+  or [`websocat`](https://github.com/vi/websocat) for the websocket sink. `stdout`
+  needs nothing.
 
 ## Environment variables
 
@@ -82,8 +111,11 @@ LIVE=1 ./example.sh                 # real: needs a funded pay CLI + Telegram bo
 | `PAYSH_RPC_URL` | pay.sh JSON-RPC route for the chain you're watching |
 | `WATCH_WALLET` | Wallet address to monitor |
 | `THRESHOLD_NATIVE` | Min transfer size in the native unit (e.g. `100` = 100 ETH) |
-| `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather |
-| `TELEGRAM_CHAT_ID` | Chat/channel id to push alerts to |
+| `ALERT_SINK` | `telegram` (default), `webhook`, `websocket`, or `stdout` — see [Alert transports](#alert-transports) |
+| `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather (telegram sink) |
+| `TELEGRAM_CHAT_ID` | Chat/channel id to push alerts to (telegram sink) |
+| `WEBHOOK_URL` | URL to `POST` the JSON payload to (webhook sink) |
+| `WS_URL` | Websocket URL to push the JSON payload to (websocket sink) |
 | `NATIVE_SYMBOL` | _(optional)_ Display symbol, default `ETH` |
 | `POLL_SECONDS` | _(optional)_ Head poll interval, default `3` |
 | `STATE_DIR` | _(optional)_ Last-scanned block store, default `~/.whale-watcher` |

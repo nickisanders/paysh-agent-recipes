@@ -25,8 +25,14 @@ set -euo pipefail
 #   PAYSH_RPC_URL       pay.sh JSON-RPC endpoint for the target chain
 #   WATCH_WALLET        wallet address to watch (native transfers to/from)
 #   THRESHOLD_NATIVE    min transfer size in the chain's native unit (e.g. ETH)
-#   TELEGRAM_BOT_TOKEN  from @BotFather
-#   TELEGRAM_CHAT_ID    your chat/channel id (talk to @userinfobot to get yours)
+#
+# Alert transport — pick one with ALERT_SINK (default: telegram):
+#   telegram   -> needs TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID
+#   webhook    -> needs WEBHOOK_URL   (POSTs the JSON payload)
+#   websocket  -> needs WS_URL        (pushes the JSON payload via websocat)
+#   stdout     -> prints the JSON payload (pipe it into your agent / anything)
+# Non-telegram sinks emit a machine-readable JSON payload, so agents can consume
+# alerts directly instead of parsing a human string.
 #
 # Optional:
 #   NATIVE_SYMBOL       display symbol for the native asset (default: ETH)
@@ -35,6 +41,7 @@ set -euo pipefail
 #   DRY_RUN=1           demo: scan EXAMPLE_BLOCK once, print instead of push
 #   EXAMPLE_BLOCK       canned block for DRY_RUN (default: ./example-block.json)
 
+ALERT_SINK="${ALERT_SINK:-telegram}"
 NATIVE_SYMBOL="${NATIVE_SYMBOL:-ETH}"
 POLL_SECONDS="${POLL_SECONDS:-3}"
 STATE_DIR="${STATE_DIR:-$HOME/.whale-watcher}"
@@ -71,9 +78,17 @@ if [ "$DRY_RUN" = "1" ]; then
   log "DRY RUN — scanning $EXAMPLE_BLOCK once, printing instead of pushing to Telegram."
 else
   require_cmd curl
-  for v in PAYSH_RPC_URL WATCH_WALLET THRESHOLD_NATIVE TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID; do
+  for v in PAYSH_RPC_URL WATCH_WALLET THRESHOLD_NATIVE; do
     require_env "$v"
   done
+  # Validate only the env the chosen sink actually needs.
+  case "$ALERT_SINK" in
+    telegram)  require_env TELEGRAM_BOT_TOKEN; require_env TELEGRAM_CHAT_ID ;;
+    webhook)   require_env WEBHOOK_URL ;;
+    websocket) require_env WS_URL; require_cmd websocat ;;
+    stdout)    : ;;
+    *)         die "Unknown ALERT_SINK '$ALERT_SINK' (use: telegram|webhook|websocket|stdout)" ;;
+  esac
 fi
 
 case "$THRESHOLD_NATIVE" in ''|*[!0-9.]*) die "THRESHOLD_NATIVE must be a number, got: '$THRESHOLD_NATIVE'";; esac
@@ -91,14 +106,39 @@ rpc() {
     -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"${method}\",\"params\":${params}}"
 }
 
-# --- Telegram push -----------------------------------------------------------
-push_telegram() {
-  local text="$1"
-  curl -sS -o /dev/null -w '%{http_code}' \
-    "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-    --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
-    --data-urlencode "text=${text}" \
-    --data-urlencode "disable_web_page_preview=true" || echo "000"
+# --- Alert delivery (pluggable sink) -----------------------------------------
+# Deliver one alert. `text` is the human string (Telegram); `payload` is the
+# machine-readable JSON (webhook/websocket/stdout). Logs the outcome; never
+# aborts the watcher on a delivery failure.
+deliver() {
+  local text="$1" payload="$2"
+  case "$ALERT_SINK" in
+    telegram)
+      local code
+      code="$(curl -sS -o /dev/null -w '%{http_code}' \
+        "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+        --data-urlencode "text=${text}" \
+        --data-urlencode "disable_web_page_preview=true" || echo "000")"
+      [ "$code" = "200" ] && log "Pushed to Telegram." || log "Telegram HTTP $code."
+      ;;
+    webhook)
+      local code
+      code="$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$WEBHOOK_URL" \
+        -H 'content-type: application/json' --data "$payload" || echo "000")"
+      case "$code" in 2*) log "Posted to webhook ($code).";; *) log "Webhook HTTP $code.";; esac
+      ;;
+    websocket)
+      if printf '%s\n' "$payload" | websocat -n1 "$WS_URL" >/dev/null 2>&1; then
+        log "Pushed to websocket."
+      else
+        log "Websocket push failed ($WS_URL)."
+      fi
+      ;;
+    stdout)
+      printf '%s\n' "$payload"
+      ;;
+  esac
 }
 
 # --- Scan one block ----------------------------------------------------------
@@ -137,18 +177,24 @@ scan_block() {
       dir="in";  other="$from"
     fi
 
-    local body
+    local body payload
     body="🐋 Whale alert: ${WATCH_WALLET:0:6}…${WATCH_WALLET: -4} ${dir} ${native} ${NATIVE_SYMBOL} (counterparty ${other:0:6}…). tx ${hash:0:10}…"
+    # jq builds the JSON so values are escaped correctly.
+    payload="$(jq -nc \
+      --arg wallet "$WATCH_WALLET" --arg dir "$dir" --arg value "$native" \
+      --arg symbol "$NATIVE_SYMBOL" --arg counterparty "$other" --arg tx "$hash" \
+      --arg text "$body" \
+      '{type:"whale_alert",wallet:$wallet,direction:$dir,value:$value,symbol:$symbol,counterparty:$counterparty,tx:$tx,text:$text}')"
 
     if [ "$DRY_RUN" = "1" ]; then
-      log "Whale detected (${native} ${NATIVE_SYMBOL}) — would push to Telegram:"
-      printf 'TELEGRAM: %s\n' "$body"
+      log "Whale detected (${native} ${NATIVE_SYMBOL}) — would deliver via '${ALERT_SINK}':"
+      printf 'ALERT: %s\n' "$body"
+      printf 'PAYLOAD: %s\n' "$payload"
       continue
     fi
 
-    log "Whale detected (${native} ${NATIVE_SYMBOL}). Pushing to Telegram ..."
-    local code; code="$(push_telegram "$body")"
-    if [ "$code" = "200" ]; then log "Pushed tx $hash."; else log "Telegram HTTP $code for tx $hash."; fi
+    log "Whale detected (${native} ${NATIVE_SYMBOL}). Delivering via '${ALERT_SINK}' ..."
+    deliver "$body" "$payload"
   done <<< "$hits"
 }
 

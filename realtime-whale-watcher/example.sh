@@ -24,12 +24,13 @@ fi
 if [ "${LIVE:-0}" = "1" ]; then export DRY_RUN=0; else export DRY_RUN=1; fi
 
 # --- 2. Call the watcher, receive its data -----------------------------------
-# In DRY_RUN the watcher scans one block and prints `TELEGRAM: <body>` per hit.
+# In DRY_RUN the watcher scans one block and prints `ALERT: <body>` per hit
+# (plus a `PAYLOAD: <json>` line for machine consumers).
 echo
 echo "==> Running realtime-whale.sh (watching ${WATCH_WALLET}, threshold ${THRESHOLD_NATIVE} ${NATIVE_SYMBOL:-ETH})"
 echo
 
-alerts="$("$SCRIPT_DIR/realtime-whale.sh" | grep '^TELEGRAM: ' || true)"
+alerts="$("$SCRIPT_DIR/realtime-whale.sh" | grep '^ALERT: ' || true)"
 
 # --- 3. Do something with the data -------------------------------------------
 if [ -z "$alerts" ]; then
@@ -41,7 +42,7 @@ count="$(printf '%s\n' "$alerts" | wc -l | tr -d ' ')"
 echo "==> Received $count alert(s):"
 echo
 printf '%s\n' "$alerts" | while IFS= read -r line; do
-  printf '  • %s\n' "${line#TELEGRAM: }"
+  printf '  • %s\n' "${line#ALERT: }"
 done
 
 echo

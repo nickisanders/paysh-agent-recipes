@@ -13,7 +13,7 @@ links to the matching X thread. Clone one, set a few env vars, and run.
 | Recipe | What it does | Stack | Thread |
 |---|---|---|---|
 | [🐋 Whale Watcher](./whale-watcher) | Watches a wallet and SMS-alerts you when a transaction crosses a USD threshold | `pay claude` · Heurist Mesh · Twilio · cron | [X](https://x.com/nickisanders/status/2072759755798626603) |
-| [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Follows the chain head and pushes a Telegram alert within ~one block of a whale-sized transfer | pay.sh JSON-RPC · Telegram · long-running | _soon_ |
+| [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Follows the chain head and alerts within ~one block of a whale-sized transfer (Telegram / webhook / websocket / stdout) | pay.sh JSON-RPC · long-running | _soon_ |
 
 _More recipes coming — PRs welcome._
 
