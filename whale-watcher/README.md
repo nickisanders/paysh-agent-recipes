@@ -1,10 +1,10 @@
 # 🐋 Whale Watcher
 
-Monitor any wallet and get an **SMS the moment a whale-sized transaction lands**.
+Monitor any wallet and get an SMS the moment a whale-sized transaction lands.
 
 The script asks [Heurist Mesh](https://mesh.heurist.ai/) for the wallet's recent
 on-chain activity through [`pay claude`](https://pay.sh) — paid per request over
-pay.sh with USDC, **no API keys or accounts** — and fires a
+pay.sh with USDC, no API keys or accounts — and fires a
 [Twilio](https://www.twilio.com/) text when a transfer at or above your USD
 threshold shows up. Runs on a cron, dedupes so the same transaction never pages
 you twice, and stays silent when nothing qualifies.
@@ -22,7 +22,7 @@ DRY_RUN=1 ./whale-watcher.sh
 ```
 
 This feeds the script the canned [`example-response.json`](./example-response.json)
-instead of calling `pay`, and **prints the SMS it would send** instead of texting.
+instead of calling `pay`, and prints the SMS it would send instead of texting.
 No `pay`, no Twilio, no cost. Tweak the threshold to see the filter work:
 
 ```bash
@@ -33,7 +33,7 @@ DRY_RUN=1 THRESHOLD_USD=5000000 ./whale-watcher.sh  # catches none — stays qui
 ## End-to-end example
 
 [`example.sh`](./example.sh) is the full integration pattern: it sets the env
-vars, calls `whale-watcher.sh`, **receives the flagged transactions back**, and
+vars, calls `whale-watcher.sh`, receives the flagged transactions back, and
 processes them (here, printing a summary — swap in Slack, a webhook, or a DB).
 
 ```bash

@@ -3,14 +3,14 @@
 ![Realtime Whale Watcher demo](demo.gif)
 
 The low-latency sibling of [Whale Watcher](../whale-watcher). Instead of polling
-on a cron, this is a **long-running process that follows the chain head** and
-fires an alert the instant a whale-sized transfer to/from your wallet lands in a
-new block. Deliver it via **Telegram, a webhook, a websocket, or stdout** —
-you're not locked into any one channel.
+on a cron, this is a long-running process that follows the chain head and fires
+an alert the instant a whale-sized transfer to/from your wallet lands in a new
+block. Deliver it via Telegram, a webhook, a websocket, or stdout — you're not
+locked into any one channel.
 
 It reads on-chain data through [pay.sh](https://pay.sh)'s pay-per-request
 JSON-RPC (no API keys), so you still pay only for the calls you make. Works across
-**EVM chains and Solana** — pick with one env var (`NETWORK`).
+EVM chains and Solana — pick with one env var (`NETWORK`).
 
 📎 **X thread:** <https://x.com/nickisanders/status/2073066021926121499>
 
@@ -23,9 +23,9 @@ the cron interval and you only ever see settled history. Someone rightly asked:
 for time-sensitive action, why poll instead of push?
 
 This recipe is the answer. It trades a little setup (a long-running process +
-a Telegram bot) for **~one-block latency** instead of ~one-cron-tick.
+a Telegram bot) for ~one-block latency instead of ~one-cron-tick.
 
-**The honest caveat:** pay.sh is per-request HTTP (x402), not a streaming
+The honest caveat: pay.sh is per-request HTTP (x402), not a streaming
 socket. So "realtime" here means *scan every block the moment it's produced* —
 the lowest-latency model that fits a per-request payment rail. It catches
 transactions at confirmation, not in the mempool. For pre-confirmation signal
@@ -46,7 +46,7 @@ The two chains detect transfers differently, behind one interface:
 
 - **EVM** — matches `tx.from`/`tx.to` and reads `tx.value` (hex wei).
 - **Solana** — there's no `tx.value`, so it derives native SOL moves from each
-  account's pre/post **balance deltas** (lamports). The wallet's own delta is the
+  account's pre/post balance deltas (lamports). The wallet's own delta is the
   amount; the largest opposite-sign delta is the likely counterparty.
 
 ## Supported chains
@@ -70,7 +70,7 @@ NETWORK=solana ./realtime-whale.sh          # watch a Solana wallet for SOL whal
 NETWORK=base   ./realtime-whale.sh          # watch a Base wallet for ETH whales
 ```
 
-> Scope: this watches **native-asset** transfers (ETH, SOL, etc.). Token whales
+> Scope: this watches native-asset transfers (ETH, SOL, etc.). Token whales
 > (ERC-20 on EVM, SPL like USDC on Solana) live in logs/instructions rather than
 > the native value, so they're a follow-on. USD thresholds need a price call, kept
 > out of the hot loop on purpose to stay fast and dependency-light. On Solana, the
@@ -80,7 +80,7 @@ NETWORK=base   ./realtime-whale.sh          # watch a Base wallet for ETH whales
 
 Set `ALERT_SINK` to route alerts wherever you want — you're not forced into
 Telegram. Every non-telegram sink emits a machine-readable JSON payload, so your
-**agents** can consume alerts directly:
+agents can consume alerts directly:
 
 ```json
 {"type":"whale_alert","network":"ethereum","wallet":"0xd8dA…6045","direction":"in",

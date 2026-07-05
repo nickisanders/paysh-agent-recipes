@@ -1,6 +1,6 @@
 # paysh-agent-recipes
 
-A library of short, copy-pasteable AI agent workflows that **pay their own way** —
+A library of short, copy-pasteable AI agent workflows that pay their own way —
 built on [pay.sh](https://pay.sh), the per-request USDC micropayment layer from
 the Solana Foundation and Google Cloud. No API keys, no accounts, no
 subscriptions: each recipe pays for exactly the calls it makes, right when it
@@ -30,7 +30,7 @@ via the x402 protocol. No sign-up, no billing account, no API keys to rotate.
 ## Getting started
 
 1. Pick a recipe folder and open its `README.md`.
-2. Most recipes ship a **`DRY_RUN=1`** demo mode with a canned response — run it
+2. Most recipes ship a `DRY_RUN=1` demo mode with a canned response — run it
    first to see the workflow end-to-end with no `pay` balance or credentials.
 3. Install and fund the `pay` CLI — see <https://pay.sh>.
 4. Set the listed environment variables and run the script for real.
