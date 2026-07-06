@@ -14,10 +14,10 @@ Require jq
 Set Shell bash
 Set FontSize 18
 Set Width 1400
-Set Height 250
+Set Height 290
 Set Padding 24
 Set Theme "Catppuccin Mocha"
-Set TypingSpeed 50ms
+Set TypingSpeed 45ms
 
 Hide
 Type "clear"
@@ -25,18 +25,24 @@ Enter
 Show
 
 Sleep 700ms
-Type "# Watch any web page. Know the moment it changes."
+Type "# Watch any web page. Get a plain-English summary of what changed:"
 Enter
-Sleep 1200ms
-
-Type "DRY_RUN=1 ./page-watch.sh 2>/dev/null | sed -n 's/^ALERT: //p'"
-Enter
-Sleep 3s
-
-Type "# Add SUMMARIZE=1 and pay claude explains the change in plain English:"
-Enter
-Sleep 1200ms
+Sleep 1000ms
 Type "DRY_RUN=1 SUMMARIZE=1 ./page-watch.sh 2>/dev/null | sed -n 's/^ALERT: //p'"
 Enter
-Sleep 4s
+Sleep 3500ms
+
+Type "# Only alert on changes you care about. Nothing about layoffs? Silence:"
+Enter
+Sleep 1000ms
+Type "DRY_RUN=1 ALERT_IF=layoffs ./page-watch.sh 2>&1 | grep quiet"
+Enter
+Sleep 2500ms
+
+Type "# But a price change pings you:"
+Enter
+Sleep 1000ms
+Type "DRY_RUN=1 ALERT_IF='[$]' ./page-watch.sh 2>/dev/null | sed -n 's/^ALERT: //p'"
+Enter
+Sleep 3500ms
 Sleep 1s

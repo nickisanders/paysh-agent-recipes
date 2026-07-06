@@ -71,7 +71,7 @@ if [ "$DRY_RUN" = "1" ]; then
   WATCH_URL="${WATCH_URL:-https://acme.example/pricing}"
   [ -f "$EXAMPLE_BEFORE" ] || die "Fixture not found: $EXAMPLE_BEFORE"
   [ -f "$EXAMPLE_AFTER" ]  || die "Fixture not found: $EXAMPLE_AFTER"
-  log "DRY RUN — diffing fixtures for $WATCH_URL, printing instead of delivering."
+  log "DRY RUN: diffing fixtures for $WATCH_URL, printing instead of delivering."
 else
   require_cmd curl
   require_env PAYSH_SCRAPE_URL
@@ -171,7 +171,7 @@ compare_and_alert() {
   # change never costs anything.
   if [ -n "${ALERT_IF:-}" ]; then
     if ! printf '%s\n' "$d" | grep -E '^[<>] ' | grep -qE "$ALERT_IF"; then
-      log "Change detected but nothing matched ALERT_IF ('$ALERT_IF') — staying quiet."
+      log "Change detected but nothing matched ALERT_IF ('$ALERT_IF'), staying quiet."
       return 1
     fi
   fi
@@ -200,7 +200,7 @@ compare_and_alert() {
     '{type:"page_change",url:$url,changed:true,added:$added,removed:$removed,summary:$summary,diff:$diff,text:$text}')"
 
   if [ "$DRY_RUN" = "1" ]; then
-    log "Change detected (+${added}/-${removed}) — would deliver via '${ALERT_SINK}':"
+    log "Change detected (+${added}/-${removed}), would deliver via '${ALERT_SINK}':"
     printf 'ALERT: %s\n' "$body"
     printf 'PAYLOAD: %s\n' "$payload"
     return 0
@@ -228,7 +228,7 @@ check_url() {
   log "Checking $url ..."
   local new_raw; new_raw="$(fetch_markdown "$url" || true)"
   if [ -z "${new_raw//[[:space:]]/}" ]; then
-    log "Empty response for $url — leaving its last snapshot untouched."
+    log "Empty response for $url, leaving its last snapshot untouched."
     return 0
   fi
 
