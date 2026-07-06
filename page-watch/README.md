@@ -59,6 +59,23 @@ It costs one extra paid call, and only when a change is actually detected, so an
 unchanged page never spends anything on summaries. The summary also lands in the
 JSON payload for agents.
 
+## Only alert on the changes you care about
+
+By default any content change fires. Two filters narrow that down:
+
+- `IGNORE_PATTERN` drops volatile lines before diffing (timestamps, nonces).
+- `ALERT_IF` fires only when a changed line matches a regex, so you hear the
+  signal and skip the noise.
+
+```bash
+ALERT_IF='\$[0-9]'   ./page-watch.sh   # only when a price line changes
+ALERT_IF='sold ?out' ./page-watch.sh   # only when a stock status flips
+ALERT_IF='hiring|careers' ./page-watch.sh
+```
+
+The `ALERT_IF` check runs before the paid summary, so a change you don't care
+about never costs anything.
+
 ## Alert transports
 
 Set `ALERT_SINK` (default `telegram`). Non-telegram sinks emit a JSON payload:
@@ -110,6 +127,7 @@ LIVE=1 ./example.sh   # real: needs a funded pay CLI + a valid .env
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | For the `telegram` sink |
 | `WEBHOOK_URL` | For the `webhook` sink |
 | `WS_URL` | For the `websocket` sink |
+| `ALERT_IF` | _(optional)_ Extended-regex; only alert when a changed line matches it |
 | `SUMMARIZE` | _(optional)_ `1` to summarize the change in plain English via `pay claude` (one paid call per detected change) |
 | `IGNORE_PATTERN` | _(optional)_ Extended-regex of lines to ignore before diffing |
 | `PAYSH_SCRAPE_URL` | _(optional)_ Override the pay.sh markdown-scrape endpoint |

@@ -27,6 +27,8 @@ set -euo pipefail
 #   stdout     -> prints the JSON payload (pipe it into your agent / anything)
 #
 # Optional:
+#   ALERT_IF            extended-regex; only alert when a changed line matches it
+#                       (e.g. '\$[0-9]' for price lines, 'sold ?out' for stock)
 #   SUMMARIZE=1         summarize the change in plain English via `pay claude`
 #                       (one extra paid call, only when a change is detected)
 #   PAYSH_SCRAPE_URL    pay.sh markdown-scrape endpoint (has a sane default)
@@ -157,6 +159,17 @@ compare_and_alert() {
   d="$(diff <(printf '%s\n' "$oldf") <(printf '%s\n' "$newf") || true)"
   added="$(printf '%s\n' "$d"   | grep -cE '^> ' || true)"
   removed="$(printf '%s\n' "$d" | grep -cE '^< ' || true)"
+
+  # Condition trigger: if ALERT_IF is set, only fire when a changed (added or
+  # removed) line matches it. Checked before the paid summary, so a non-matching
+  # change never costs anything.
+  if [ -n "${ALERT_IF:-}" ]; then
+    if ! printf '%s\n' "$d" | grep -E '^[<>] ' | grep -qE "$ALERT_IF"; then
+      log "Change detected but nothing matched ALERT_IF ('$ALERT_IF') — staying quiet."
+      return 1
+    fi
+  fi
+
   # A compact one-line summary of the first few changed lines for the message.
   excerpt="$(printf '%s\n' "$d" | grep -E '^[<>] ' | head -4 \
     | sed -e 's/^< /− /' -e 's/^> /+ /' \
