@@ -17,8 +17,10 @@
 set -euo pipefail
 
 # --- Config ------------------------------------------------------------------
-# Required (live mode):
-#   WATCH_URL           the page to monitor
+# Required (live mode) — one of:
+#   WATCH_URL           a single page to monitor
+#   WATCH_URLS          several pages, comma/space/newline separated
+#   URLS_FILE           path to a file of URLs (one per line, # comments ok)
 #
 # Alert transport — pick one with ALERT_SINK (default: telegram):
 #   telegram   -> needs TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID
@@ -72,8 +74,12 @@ if [ "$DRY_RUN" = "1" ]; then
   log "DRY RUN — diffing fixtures for $WATCH_URL, printing instead of delivering."
 else
   require_cmd curl
-  require_env WATCH_URL
   require_env PAYSH_SCRAPE_URL
+  # Need at least one URL source: a single WATCH_URL, a WATCH_URLS list, or a file.
+  if [ -z "${WATCH_URL:-}${WATCH_URLS:-}${URLS_FILE:-}" ]; then
+    die "Set WATCH_URL, WATCH_URLS (comma/space/newline list), or URLS_FILE."
+  fi
+  [ -z "${URLS_FILE:-}" ] || [ -f "$URLS_FILE" ] || die "URLS_FILE not found: $URLS_FILE"
   case "$ALERT_SINK" in
     telegram)  require_env TELEGRAM_BOT_TOKEN; require_env TELEGRAM_CHAT_ID ;;
     webhook)   require_env WEBHOOK_URL ;;
@@ -213,24 +219,44 @@ if [ "$DRY_RUN" = "1" ]; then
 fi
 
 # --- Live: fetch, compare to the last snapshot, alert ------------------------
-mkdir -p "$STATE_DIR"
-SNAP_FILE="$STATE_DIR/$(printf '%s' "$WATCH_URL" | cksum | cut -d' ' -f1).md"
+# Check one URL against its own snapshot. A failure here never aborts the run,
+# so one bad URL can't stop the rest of the list.
+check_url() {
+  local url="$1"
+  local snap; snap="$STATE_DIR/$(printf '%s' "$url" | cksum | cut -d' ' -f1).md"
 
-log "Checking $WATCH_URL ..."
-new_raw="$(fetch_markdown "$WATCH_URL" || true)"
-if [ -z "${new_raw//[[:space:]]/}" ]; then
-  die "Empty response from scrape endpoint — leaving the last snapshot untouched."
-fi
+  log "Checking $url ..."
+  local new_raw; new_raw="$(fetch_markdown "$url" || true)"
+  if [ -z "${new_raw//[[:space:]]/}" ]; then
+    log "Empty response for $url — leaving its last snapshot untouched."
+    return 0
+  fi
 
-if [ ! -f "$SNAP_FILE" ]; then
-  printf '%s' "$new_raw" > "$SNAP_FILE"
-  log "Baseline saved for $WATCH_URL. No alert on first run."
-  exit 0
-fi
+  if [ ! -f "$snap" ]; then
+    printf '%s' "$new_raw" > "$snap"
+    log "Baseline saved for $url. No alert on first run."
+    return 0
+  fi
 
-if compare_and_alert "$WATCH_URL" "$(cat "$SNAP_FILE")" "$new_raw"; then
-  printf '%s' "$new_raw" > "$SNAP_FILE"   # advance the baseline after alerting
+  compare_and_alert "$url" "$(cat "$snap")" "$new_raw" || true
+  printf '%s' "$new_raw" > "$snap"   # advance/refresh the baseline
+}
+
+# Build the URL list from URLS_FILE (one per line, # comments ok), or WATCH_URLS
+# (comma/space/newline separated), or a single WATCH_URL.
+if [ -n "${URLS_FILE:-}" ]; then
+  url_list="$(grep -vE '^[[:space:]]*(#|$)' "$URLS_FILE" || true)"
+elif [ -n "${WATCH_URLS:-}" ]; then
+  url_list="$(printf '%s' "$WATCH_URLS" | tr ', \t' '\n\n\n' | grep -vE '^[[:space:]]*$' || true)"
 else
-  # No meaningful change; refresh the snapshot so ignored churn doesn't pile up.
-  printf '%s' "$new_raw" > "$SNAP_FILE"
+  url_list="$WATCH_URL"
 fi
+
+[ -n "${url_list//[[:space:]]/}" ] || die "No URLs to watch."
+
+mkdir -p "$STATE_DIR"
+while IFS= read -r url; do
+  url="$(printf '%s' "$url" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+  [ -n "$url" ] || continue
+  check_url "$url"
+done <<< "$url_list"

@@ -76,6 +76,22 @@ ALERT_IF='hiring|careers' ./page-watch.sh
 The `ALERT_IF` check runs before the paid summary, so a change you don't care
 about never costs anything.
 
+## Watch many pages at once
+
+Point it at a list instead of a single URL and it checks each one in the same
+run, each with its own snapshot. A failure on one page never stops the rest.
+
+```bash
+# inline list
+WATCH_URLS="https://a.com/pricing, https://b.com/status" ./page-watch.sh
+
+# or a file, one URL per line (# comments ok)
+URLS_FILE=./urls.txt ./page-watch.sh
+```
+
+The filters (`IGNORE_PATTERN`, `ALERT_IF`, `SUMMARIZE`) apply to every page in the
+list.
+
 ## Alert transports
 
 Set `ALERT_SINK` (default `telegram`). Non-telegram sinks emit a JSON payload:
@@ -122,7 +138,9 @@ LIVE=1 ./example.sh   # real: needs a funded pay CLI + a valid .env
 
 | Variable | Description |
 |---|---|
-| `WATCH_URL` | The page to monitor |
+| `WATCH_URL` | A single page to monitor |
+| `WATCH_URLS` | _(alt)_ Several pages, comma / space / newline separated |
+| `URLS_FILE` | _(alt)_ Path to a file of URLs, one per line (`#` comments ok) |
 | `ALERT_SINK` | `telegram` (default), `webhook`, `websocket`, or `stdout` |
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | For the `telegram` sink |
 | `WEBHOOK_URL` | For the `webhook` sink |
@@ -149,8 +167,8 @@ Check every 30 minutes. Put your `export`s in an env file so cron has them:
 */30 * * * * . $HOME/page-watch.env && /path/to/page-watch/page-watch.sh >> $HOME/page-watch.log 2>&1
 ```
 
-Snapshots live in `~/.page-watch/`, one per URL, so you can watch several pages from
-the same cron by pointing separate jobs at different `WATCH_URL`s.
+Snapshots live in `~/.page-watch/`, one per URL, so a single cron job can watch a
+whole list via `WATCH_URLS` or `URLS_FILE`.
 
 > **Cost note:** one `pay` scrape request per check (a fraction of a cent). A `*/30`
 > schedule is ~48 requests/day per page — tune the interval and your pay.sh balance.
