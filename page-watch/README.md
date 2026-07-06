@@ -1,5 +1,7 @@
 # 📄 Page Watch
 
+![Page Watch demo](demo.gif)
+
 Watch any web page and get pinged the moment it changes.
 
 Page Watch fetches a URL as clean markdown through [pay.sh](https://pay.sh)'s
