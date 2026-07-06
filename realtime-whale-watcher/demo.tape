@@ -7,6 +7,7 @@
 # output changes. Runs in DRY_RUN — no pay balance, no Telegram, no secrets.
 
 Output demo.gif
+Output demo.mp4
 
 Require bash
 Require jq
