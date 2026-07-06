@@ -1,0 +1,18 @@
+[
+  {
+    "topic": "AI agent payments",
+    "answer": "Autonomous agents paying for APIs per request is moving from demos to production, with USDC micropayments over the x402 protocol emerging as the common rail. The pitch is no accounts and no API keys: the payment itself authorizes the call, which removes the onboarding friction that blocked agents from using real-world APIs.",
+    "sources": [
+      { "title": "x402 protocol overview", "url": "https://www.x402.org" },
+      { "title": "pay.sh: pay-as-you-go APIs for agents", "url": "https://pay.sh" }
+    ]
+  },
+  {
+    "topic": "Solana ecosystem",
+    "answer": "Solana continues to push agentic payments as a core use case, leaning on fast settlement and cheap fees for high-volume, low-value micropayments. Stablecoin transfer volume on the network remains a leading indicator that analysts watch for real economic activity rather than speculation.",
+    "sources": [
+      { "title": "Solana agentic payments docs", "url": "https://solana.com/docs/payments/agentic-payments" },
+      { "title": "Solana Foundation news", "url": "https://solana.com/news" }
+    ]
+  }
+]
