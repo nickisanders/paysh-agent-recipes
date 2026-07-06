@@ -18,6 +18,7 @@ run.
 |---|---|---|---|
 | [🐋 Whale Watcher](./whale-watcher) | Watches a wallet and SMS-alerts you when a transaction crosses a USD threshold | `pay claude` · Heurist Mesh · Twilio · cron | [X](https://x.com/nickisanders/status/2072759755798626603) |
 | [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Low-latency sibling: follows the chain head (EVM + Solana) and pushes within ~one block of a whale-sized transfer, via Telegram / webhook / websocket / stdout | pay.sh JSON-RPC · block scan · pluggable chains + sinks | [X](https://x.com/nickisanders/status/2073066021926121499) |
+| [📄 Page Watch](./page-watch) | Watches any web page and alerts you when it changes (pricing pages, job boards, docs, ToS), via Telegram / webhook / websocket / stdout | pay.sh scrape → markdown · diff · cron | _soon_ |
 
 _More recipes coming — PRs welcome._
 
