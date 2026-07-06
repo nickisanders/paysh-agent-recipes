@@ -38,14 +38,36 @@ and [`example-page-after.md`](./example-page-after.md), a pricing page that bump
 price and added a plan) and prints the alert it would send. No `pay`, no network, no
 state written.
 
+```bash
+DRY_RUN=1 SUMMARIZE=1 ./page-watch.sh   # same, but with a plain-English summary
+```
+
+## Plain-English summaries
+
+By default the alert carries a compact diff excerpt. Set `SUMMARIZE=1` and the
+change is run through `pay claude` into a human sentence instead:
+
+```
+default:      📄 Page changed: … (+7/-2 lines). − - 10 projects · + $59/month · + ## Team
+SUMMARIZE=1:  📄 Page changed: … (+7/-2 lines). Starter now includes 20 projects (was 10),
+              the Pro plan rose from $49 to $59/mo, and a new Team plan launched at $99/mo.
+```
+
+It costs one extra paid call, and only when a change is actually detected, so an
+unchanged page never spends anything on summaries. The summary also lands in the
+JSON payload for agents.
+
 ## Alert transports
 
 Set `ALERT_SINK` (default `telegram`). Non-telegram sinks emit a JSON payload:
 
 ```json
 {"type":"page_change","url":"https://acme.example/pricing","changed":true,
- "added":7,"removed":2,"diff":"…unified diff…","text":"📄 Page changed: …"}
+ "added":7,"removed":2,"summary":"Pro rose from $49 to $59…","diff":"…unified diff…",
+ "text":"📄 Page changed: …"}
 ```
+
+(`summary` is filled when `SUMMARIZE=1`, otherwise an empty string.)
 
 | `ALERT_SINK` | Needs | Delivery |
 |---|---|---|
@@ -86,6 +108,7 @@ LIVE=1 ./example.sh   # real: needs a funded pay CLI + a valid .env
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | For the `telegram` sink |
 | `WEBHOOK_URL` | For the `webhook` sink |
 | `WS_URL` | For the `websocket` sink |
+| `SUMMARIZE` | _(optional)_ `1` to summarize the change in plain English via `pay claude` (one paid call per detected change) |
 | `IGNORE_PATTERN` | _(optional)_ Extended-regex of lines to ignore before diffing |
 | `PAYSH_SCRAPE_URL` | _(optional)_ Override the pay.sh markdown-scrape endpoint |
 | `STATE_DIR` | _(optional)_ Snapshot store, default `~/.page-watch` |

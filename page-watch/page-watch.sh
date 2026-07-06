@@ -27,6 +27,8 @@ set -euo pipefail
 #   stdout     -> prints the JSON payload (pipe it into your agent / anything)
 #
 # Optional:
+#   SUMMARIZE=1         summarize the change in plain English via `pay claude`
+#                       (one extra paid call, only when a change is detected)
 #   PAYSH_SCRAPE_URL    pay.sh markdown-scrape endpoint (has a sane default)
 #   IGNORE_PATTERN      extended-regex of lines to ignore (timestamps, nonces…)
 #   STATE_DIR           where page snapshots are stored (default: ~/.page-watch)
@@ -34,6 +36,7 @@ set -euo pipefail
 #   EXAMPLE_BEFORE / EXAMPLE_AFTER   fixtures used by DRY_RUN
 
 ALERT_SINK="${ALERT_SINK:-telegram}"
+SUMMARIZE="${SUMMARIZE:-0}"
 PAYSH_SCRAPE_URL="${PAYSH_SCRAPE_URL:-https://scrape.pay.sh/markdown}"
 STATE_DIR="${STATE_DIR:-$HOME/.page-watch}"
 DRY_RUN="${DRY_RUN:-0}"
@@ -120,6 +123,22 @@ deliver() {
   esac
 }
 
+# --- Summarize a diff in plain English (optional, paid) ----------------------
+# Turns the raw diff into a human sentence via `pay claude`. In DRY_RUN it
+# returns a canned example so the demo shows the feature without paying.
+summarize_diff() {
+  local url="$1" d="$2"
+  if [ "$DRY_RUN" = "1" ]; then
+    printf 'Starter now includes 20 projects (was 10), the Pro plan rose from $49 to $59/mo, and a new Team plan launched at $99/mo.'
+    return 0
+  fi
+  local prompt
+  prompt="You monitor a web page for changes. Below is a unified diff of the page (as markdown) at ${url}. In one or two plain sentences, say what changed for a human reader. No preamble, no markdown, just the summary.
+
+${d}"
+  pay claude -p "$prompt" 2>/dev/null | tr '\n' ' ' | sed 's/  */ /g; s/ *$//' || true
+}
+
 # --- Compare two versions and alert on change --------------------------------
 # Emits an alert if the (filtered) markdown differs. Returns the diff details.
 compare_and_alert() {
@@ -143,13 +162,23 @@ compare_and_alert() {
     | sed -e 's/^< /− /' -e 's/^> /+ /' \
     | awk 'NR>1{printf " · "} {printf "%s", $0} END{if (NR) print ""}')"
 
+  # Optional plain-English summary of the change via pay claude.
+  local summary=""
+  if [ "$SUMMARIZE" = "1" ]; then
+    summary="$(summarize_diff "$url" "$d")"
+  fi
+
+  # Prefer the AI summary in the human message; fall back to the raw excerpt.
+  local headline="$excerpt"
+  [ -n "${summary//[[:space:]]/}" ] && headline="$summary"
+
   local body payload
-  body="📄 Page changed: ${url} (+${added}/-${removed} lines). ${excerpt}"
+  body="📄 Page changed: ${url} (+${added}/-${removed} lines). ${headline}"
   payload="$(jq -nc \
-    --arg url "$url" --arg text "$body" \
+    --arg url "$url" --arg text "$body" --arg summary "$summary" \
     --argjson added "$added" --argjson removed "$removed" \
     --arg diff "$(printf '%s' "$d" | head -c 1200)" \
-    '{type:"page_change",url:$url,changed:true,added:$added,removed:$removed,diff:$diff,text:$text}')"
+    '{type:"page_change",url:$url,changed:true,added:$added,removed:$removed,summary:$summary,diff:$diff,text:$text}')"
 
   if [ "$DRY_RUN" = "1" ]; then
     log "Change detected (+${added}/-${removed}) — would deliver via '${ALERT_SINK}':"
