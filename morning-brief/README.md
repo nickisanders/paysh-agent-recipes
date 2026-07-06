@@ -1,5 +1,7 @@
 # ☕ Morning Brief
 
+![Morning Brief demo](demo.gif)
+
 A daily cited digest on the topics you follow, delivered to your inbox.
 
 For each topic you list, Morning Brief runs a web search through [pay.sh](https://pay.sh)
