@@ -20,6 +20,7 @@ run.
 | [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Low-latency sibling: follows the chain head (EVM + Solana) and pushes within ~one block of a whale-sized transfer, via Telegram / webhook / websocket / stdout | pay.sh JSON-RPC · block scan · pluggable chains + sinks | [X](https://x.com/nickisanders/status/2073066021926121499) |
 | [📄 Page Watch](./page-watch) | Watches any web page and alerts you when it changes (pricing pages, job boards, docs, ToS), via Telegram / webhook / websocket / stdout | pay.sh scrape → markdown · diff · cron | _soon_ |
 | [☕ Morning Brief](./morning-brief) | Daily cited digest on the topics you follow, emailed to you; chains two pay.sh APIs (web search + agent email) | pay.sh search + email · cron | _soon_ |
+| [🔻 Depeg Watchdog](./depeg-watchdog) | Watches stablecoins and alerts when one drifts off its peg, once on the break and once on recovery | pay.sh market data · state machine · cron | _soon_ |
 
 _More recipes coming — PRs welcome._
 
