@@ -21,6 +21,7 @@ run.
 | [📄 Page Watch](./page-watch) | Watches any web page and alerts you when it changes (pricing pages, job boards, docs, ToS), via Telegram / webhook / websocket / stdout | pay.sh scrape → markdown · diff · cron | _soon_ |
 | [☕ Morning Brief](./morning-brief) | Daily cited digest on the topics you follow, emailed to you; chains two pay.sh APIs (web search + agent email) | pay.sh search + email · cron | _soon_ |
 | [🔻 Depeg Watchdog](./depeg-watchdog) | Watches stablecoins and alerts when one drifts off its peg, once on the break and once on recovery | pay.sh market data · state machine · cron | _soon_ |
+| [🧲 Lead Enricher](./lead-enricher) | Batch transform: takes a CSV of emails/domains and writes back an enriched CSV (name, title, company, industry, headcount) | pay.sh enrichment gateway · CSV in/out | _soon_ |
 
 _More recipes coming — PRs welcome._
 

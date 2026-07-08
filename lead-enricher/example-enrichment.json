@@ -1,0 +1,23 @@
+{
+  "ada@analytical.io": {
+    "name": "Ada Lovelace",
+    "title": "Founder & CEO",
+    "company": "Analytical Engines",
+    "industry": "Developer Tools",
+    "employees": "12"
+  },
+  "alan@enigma.co": {
+    "name": "Alan Turing",
+    "title": "Chief Scientist",
+    "company": "Enigma Labs",
+    "industry": "Security",
+    "employees": "48"
+  },
+  "grace@cobol.dev": {
+    "name": "Grace Hopper",
+    "title": "VP Engineering",
+    "company": "COBOL Systems",
+    "industry": "Enterprise Software",
+    "employees": "230"
+  }
+}
