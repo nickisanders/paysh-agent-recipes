@@ -1,5 +1,7 @@
 # 🔻 Depeg Watchdog
 
+![Depeg Watchdog demo](demo.gif)
+
 Watch stablecoins and get alerted the moment one drifts off its peg.
 
 For each asset you list, Depeg Watchdog pulls the current price from
