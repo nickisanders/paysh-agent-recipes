@@ -1,0 +1,9 @@
+{
+  "address": "0x1111111111111111111111111111111111111111",
+  "chain": "ethereum",
+  "risk": "high",
+  "score": 78,
+  "verified": true,
+  "flags": ["mintable", "pausable", "owner_can_blacklist", "ownership_not_renounced"],
+  "notes": "Owner retains mint and blacklist powers; total supply is not fixed."
+}
