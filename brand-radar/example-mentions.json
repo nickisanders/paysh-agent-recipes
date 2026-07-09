@@ -1,0 +1,29 @@
+[
+  {
+    "id": "t3_aaa111",
+    "title": "Has anyone tried pay.sh for agent payments?",
+    "url": "https://reddit.com/r/AI_Agents/comments/aaa111",
+    "author": "builderbob",
+    "source": "r/AI_Agents",
+    "score": 42,
+    "snippet": "Been looking at x402 and pay.sh for letting agents pay per API call without keys..."
+  },
+  {
+    "id": "t3_bbb222",
+    "title": "pay.sh vs traditional API keys, worth it?",
+    "url": "https://reddit.com/r/solana/comments/bbb222",
+    "author": "devgrace",
+    "source": "r/solana",
+    "score": 18,
+    "snippet": "The no-account model is interesting but I worry about the trust tradeoffs..."
+  },
+  {
+    "id": "t3_ccc333",
+    "title": "Shipped my first x402 agent this weekend with pay.sh",
+    "url": "https://reddit.com/r/ethdev/comments/ccc333",
+    "author": "ada_l",
+    "source": "r/ethdev",
+    "score": 7,
+    "snippet": "Used pay.sh to handle the micropayments, surprisingly smooth to wire up."
+  }
+]

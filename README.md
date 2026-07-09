@@ -30,6 +30,7 @@ run.
 | [📄 Page Watch](./page-watch) | Watches any web page and alerts you when it changes (pricing pages, job boards, docs, ToS), via Telegram / webhook / websocket / stdout | pay.sh scrape → markdown · diff · cron | _soon_ |
 | [☕ Morning Brief](./morning-brief) | Daily cited digest on the topics you follow, emailed to you; chains two pay.sh APIs (web search + agent email) | pay.sh search + email · cron | _soon_ |
 | [🧲 Lead Enricher](./lead-enricher) | Batch transform: takes a CSV of emails/domains and writes back an enriched CSV (name, title, company, industry, headcount) | pay.sh enrichment gateway · CSV in/out | _soon_ |
+| [📣 Brand Radar](./brand-radar) | Tracks mentions of a keyword/brand/token across Reddit and more, alerts on new ones with an optional pay claude sentiment read | pay.sh social data + pay claude · cron | _soon_ |
 
 _More recipes coming — PRs welcome._
 
