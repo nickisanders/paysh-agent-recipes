@@ -1,5 +1,7 @@
 # 🔍 Contract Auditor
 
+![Contract Auditor demo](demo.gif)
+
 Audit a smart contract and get a plain-English risk brief.
 
 Give it a contract address and it pulls a security analysis through
