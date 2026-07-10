@@ -22,6 +22,7 @@ run.
 | [⚡ Realtime Whale Watcher](./realtime-whale-watcher) | Low-latency sibling: follows the chain head (EVM + Solana) and pushes within ~one block of a whale-sized transfer, via Telegram / webhook / websocket / stdout | pay.sh JSON-RPC · block scan · pluggable chains + sinks | [X](https://x.com/nickisanders/status/2073066021926121499) |
 | [🔻 Depeg Watchdog](./depeg-watchdog) | Watches stablecoins and alerts when one drifts off its peg, once on the break and once on recovery | pay.sh market data · state machine · cron | _soon_ |
 | [🔍 Contract Auditor](./contract-auditor) | Audits a smart contract address and returns a plain-English risk brief (via pay claude), with the raw findings for agents | pay.sh audit + pay claude · on-demand | _soon_ |
+| [🗂️ Token Dossier](./token-dossier) | One address in, a full due-diligence brief out: orchestrates audit + market + on-chain + social into one synthesized verdict | pay.sh (4 sources) + pay claude · orchestration | _soon_ |
 
 ### 🌐 Web & data
 

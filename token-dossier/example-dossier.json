@@ -1,0 +1,20 @@
+{
+  "audit": {
+    "risk": "high",
+    "flags": ["mintable", "owner_can_blacklist", "ownership_not_renounced"]
+  },
+  "market": {
+    "symbol": "MEME",
+    "price": "0.01234",
+    "change_24h": "-8.2"
+  },
+  "onchain": {
+    "large_transfers_24h": 3,
+    "top_holder_pct": 41,
+    "note": "3 large outflows totaling ~$1.2M in the last 24h"
+  },
+  "social": {
+    "mentions": 12,
+    "sentiment": "mixed"
+  }
+}
