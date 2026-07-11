@@ -1,5 +1,7 @@
 # 🗂️ Token Dossier
 
+![Token Dossier demo](demo.gif)
+
 One token address in, a full due-diligence brief out.
 
 Token Dossier orchestrates several paid [pay.sh](https://pay.sh) calls for one
