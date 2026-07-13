@@ -1,5 +1,7 @@
 # 📣 Brand Radar
 
+![Brand Radar demo](demo.gif)
+
 Track what people are saying about you, and get pinged on every new mention.
 
 Brand Radar searches social data (Reddit and more) through [pay.sh](https://pay.sh)
