@@ -23,6 +23,7 @@ run.
 | [🔻 Depeg Watchdog](./depeg-watchdog) | Watches stablecoins and alerts when one drifts off its peg, once on the break and once on recovery | pay.sh market data · state machine · cron | _soon_ |
 | [🔍 Contract Auditor](./contract-auditor) | Audits a smart contract address and returns a plain-English risk brief (via pay claude), with the raw findings for agents | pay.sh audit + pay claude · on-demand | _soon_ |
 | [🗂️ Token Dossier](./token-dossier) | One address in, a full due-diligence brief out: orchestrates audit + market + on-chain + social into one synthesized verdict | pay.sh (4 sources) + pay claude · orchestration | _soon_ |
+| [⛽ Gas Ticker](./gas-ticker) | Pings you when gas drops below your target (and again when it climbs back), so you transact when it's cheap | pay.sh JSON-RPC · state machine · cron | _soon_ |
 
 ### 🌐 Web & data
 
