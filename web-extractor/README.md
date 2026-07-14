@@ -1,5 +1,7 @@
 # 📑 Web Extractor
 
+![Web Extractor demo](demo.gif)
+
 Turn any web page into structured JSON for the fields you name.
 
 Give it a URL and a list of fields; it asks [pay.sh](https://pay.sh)'s
