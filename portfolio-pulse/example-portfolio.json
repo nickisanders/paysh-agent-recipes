@@ -1,0 +1,10 @@
+{
+  "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+  "total_usd": 124530.00,
+  "change_24h_pct": 3.2,
+  "holdings": [
+    { "symbol": "ETH",  "value_usd": 82100.00, "change_24h_pct": 2.1 },
+    { "symbol": "USDC", "value_usd": 30000.00, "change_24h_pct": 0.0 },
+    { "symbol": "LINK", "value_usd": 12430.00, "change_24h_pct": 8.1 }
+  ]
+}
