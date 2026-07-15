@@ -1,5 +1,7 @@
 # ⛽ Gas Ticker
 
+![Gas Ticker demo](demo.gif)
+
 Get pinged when gas is cheap enough to transact.
 
 Gas Ticker reads the current gas price from [pay.sh](https://pay.sh)'s JSON-RPC
