@@ -1,5 +1,7 @@
 # 💼 Portfolio Pulse
 
+![Portfolio Pulse demo](demo.gif)
+
 A daily snapshot of a wallet's holdings and value.
 
 Portfolio Pulse pulls a wallet's token holdings and USD values from
