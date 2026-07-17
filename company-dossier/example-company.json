@@ -1,0 +1,20 @@
+{
+  "enrichment": {
+    "name": "Stripe",
+    "domain": "stripe.com",
+    "industry": "Payments",
+    "employees": "8000",
+    "location": "San Francisco, US",
+    "description": "Online payment processing for internet businesses."
+  },
+  "news": [
+    {
+      "title": "Stripe expands stablecoin payments to 100+ countries",
+      "url": "https://techcrunch.com/2026/stripe-stablecoin-payments"
+    },
+    {
+      "title": "Stripe valuation climbs in latest employee tender offer",
+      "url": "https://www.reuters.com/technology/stripe-tender-2026"
+    }
+  ]
+}
