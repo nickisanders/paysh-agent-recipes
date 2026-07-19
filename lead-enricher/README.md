@@ -1,5 +1,7 @@
 # 🧲 Lead Enricher
 
+![Lead Enricher demo](demo.gif)
+
 Turn a plain list of leads into an enriched CSV.
 
 Hand it a CSV of emails or domains and it looks up each row through
