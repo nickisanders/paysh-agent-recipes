@@ -1,5 +1,7 @@
 # 🏢 Company Dossier
 
+![Company Dossier demo](demo.gif)
+
 One domain in, a one-page company brief out.
 
 Company Dossier orchestrates two paid [pay.sh](https://pay.sh) calls for a company:
