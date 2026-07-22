@@ -25,6 +25,7 @@ run.
 | [🗂️ Token Dossier](./token-dossier) | One address in, a full due-diligence brief out: orchestrates audit + market + on-chain + social into one synthesized verdict | pay.sh (4 sources) + pay claude · orchestration | _soon_ |
 | [⛽ Gas Ticker](./gas-ticker) | Pings you when gas drops below your target (and again when it climbs back), so you transact when it's cheap | pay.sh JSON-RPC · state machine · cron | _soon_ |
 | [💼 Portfolio Pulse](./portfolio-pulse) | A daily snapshot of a wallet's holdings and value: total, 24h change, top holdings, biggest mover | pay.sh wallet data · digest · cron | _soon_ |
+| [🔮 Ask Onchain](./ask-onchain) | Ask in plain English; the agent picks a pay.sh tool, pays for it, and answers. The full plan → act → answer loop | pay claude + pay.sh tools · agent loop | _soon_ |
 
 ### 🌐 Web & data
 

@@ -1,0 +1,22 @@
+{
+  "audit": {
+    "risk": "high",
+    "flags": ["mintable", "owner_can_blacklist", "ownership_not_renounced"]
+  },
+  "price": {
+    "symbol": "SOL",
+    "price": "182.40",
+    "change_24h": "2.3"
+  },
+  "holdings": {
+    "total_usd": 124530,
+    "holdings": [
+      { "symbol": "ETH", "value_usd": 82100 },
+      { "symbol": "USDC", "value_usd": 30000 }
+    ]
+  },
+  "gas": { "gwei": "12.00" },
+  "search": {
+    "answer": "The protocol shipped a v2 upgrade last week with lower fees and native stablecoin support."
+  }
+}
