@@ -1,5 +1,7 @@
 # 🔮 Ask Onchain
 
+![Ask Onchain demo](demo.gif)
+
 Ask a question in plain English. The agent picks a tool, pays for it, and answers.
 
 This is the full agent loop in one script. `pay claude` reads your question and

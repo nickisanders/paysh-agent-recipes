@@ -77,7 +77,16 @@ fi
 # returns a canned plan so the demo runs without paying.
 plan() {
   if [ "$DRY_RUN" = "1" ]; then
-    printf '{"tool":"audit","args":{"address":"0x1111111111111111111111111111111111111111"}}'
+    # A tiny keyword router stands in for the model, so the demo routes different
+    # questions to different tools without paying. Live mode uses pay claude.
+    local q; q="$(printf '%s' "$QUESTION" | tr 'A-Z' 'a-z')"
+    case "$q" in
+      *price*|*worth*|*trading*|*cost*)      jq -nc '{tool:"price",args:{symbol:"SOL"}}' ;;
+      *gas*)                                  jq -nc '{tool:"gas",args:{}}' ;;
+      *hold*|*portfolio*|*balance*|*own*)     jq -nc '{tool:"holdings",args:{address:"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"}}' ;;
+      *safe*|*rug*|*risk*|*audit*|*scam*)     jq -nc '{tool:"audit",args:{address:"0x1111111111111111111111111111111111111111"}}' ;;
+      *)                                      jq -nc --arg q "$QUESTION" '{tool:"search",args:{query:$q}}' ;;
+    esac
     return 0
   fi
   local prompt="You are an on-chain assistant with these tools:
@@ -115,7 +124,18 @@ execute() {
 answer() {
   local data="$1"
   if [ "$DRY_RUN" = "1" ]; then
-    printf "No. The contract lets the owner mint new supply and blacklist holders, and ownership is not renounced. Any of those alone is a red flag; together they mean the deployer can dilute or freeze you at will. Treat it as high risk and stay out."
+    # Canned answers keyed off which fixture came back, so the demo reads right.
+    if   printf '%s' "$data" | jq -e '.risk' >/dev/null 2>&1; then
+      printf "No. The owner can mint new supply and blacklist holders, and ownership is not renounced. Any one is a red flag; together the deployer can dilute or freeze you at will. High risk, stay out."
+    elif printf '%s' "$data" | jq -e '.price' >/dev/null 2>&1; then
+      printf "SOL is trading around \$182.40, up about 2.3%% over the last 24 hours."
+    elif printf '%s' "$data" | jq -e '.gwei' >/dev/null 2>&1; then
+      printf "Gas is about 12 gwei right now, which is cheap. A good window to get a transaction in."
+    elif printf '%s' "$data" | jq -e '.total_usd' >/dev/null 2>&1; then
+      printf "The wallet holds roughly \$124,530, mostly ETH (~\$82k) and USDC (~\$30k)."
+    else
+      printf "The protocol shipped a v2 upgrade last week with lower fees and native stablecoin support."
+    fi
     return 0
   fi
   pay claude -p "Answer the user's question in two or three plain sentences using this data. No preamble. Question: ${QUESTION}. Data: ${data}" \
