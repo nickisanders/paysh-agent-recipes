@@ -2,7 +2,7 @@
 #
 # whale-watcher.sh — Watch a wallet, SMS you when a whale-sized transaction lands.
 #
-# Queries Heurist Mesh for recent on-chain activity of $WATCH_WALLET via `pay claude`
+# Queries Heurist Mesh for recent onchain activity of $WATCH_WALLET via `pay claude`
 # (paid per-request over pay.sh — no API keys), and fires a Twilio SMS when a
 # transaction at or above $THRESHOLD_USD is detected. Designed to run on a cron.
 #
@@ -76,9 +76,9 @@ fi
 
 # --- Query Heurist Mesh via pay claude ---------------------------------------
 # We ask for STRICT JSON so the response is machine-parseable. Keep the schema
-# tight — Claude fills usd_value from the on-chain data Heurist Mesh returns.
+# tight — Claude fills usd_value from the onchain data Heurist Mesh returns.
 read -r -d '' PROMPT <<EOF || true
-Use the Heurist Mesh tools to look up the most recent on-chain transactions for
+Use the Heurist Mesh tools to look up the most recent onchain transactions for
 wallet address ${WATCH_WALLET}. For each transaction include its hash, the USD
 value at time of transfer, the token symbol, the direction ("in" or "out"), the
 counterparty address, and an ISO 8601 timestamp.

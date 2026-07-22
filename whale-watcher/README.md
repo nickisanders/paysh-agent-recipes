@@ -3,7 +3,7 @@
 Monitor any wallet and get an SMS the moment a whale-sized transaction lands.
 
 The script asks [Heurist Mesh](https://mesh.heurist.ai/) for the wallet's recent
-on-chain activity through [`pay claude`](https://pay.sh) — paid per request over
+onchain activity through [`pay claude`](https://pay.sh) — paid per request over
 pay.sh with USDC, no API keys or accounts — and fires a
 [Twilio](https://www.twilio.com/) text when a transfer at or above your USD
 threshold shows up. Runs on a cron, dedupes so the same transaction never pages

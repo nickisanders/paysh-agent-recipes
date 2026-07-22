@@ -6,7 +6,7 @@ One token address in, a full due-diligence brief out.
 
 Token Dossier orchestrates several paid [pay.sh](https://pay.sh) calls for one
 address and synthesizes them into a single verdict: contract risk (audit), price
-and 24h move (market data), recent large flows (on-chain), and social sentiment.
+and 24h move (market data), recent large flows (onchain), and social sentiment.
 Then `pay claude` writes a one-paragraph "should you be careful with this" brief.
 Paid per request in USDC, no API keys.
 
@@ -21,7 +21,7 @@ Deliver via stdout (default), Telegram, a webhook, or a websocket.
 
 ## What it does
 
-1. Fires four pay.sh lookups for the address: audit, market, on-chain, social.
+1. Fires four pay.sh lookups for the address: audit, market, onchain, social.
 2. Anchors a verdict on the contract risk (AVOID / CAUTION / LOOKS OK).
 3. Sends all four sources to `pay claude` for a plain-English synthesis.
 4. Prints or delivers the dossier. The raw sources ride along in the JSON payload.

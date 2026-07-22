@@ -4,7 +4,7 @@
 #
 # Orchestrates several paid pay.sh calls for one address and synthesizes them
 # into a single verdict: contract risk (audit), price and 24h move (market data),
-# recent large flows (on-chain), and social sentiment. Then `pay claude` writes a
+# recent large flows (onchain), and social sentiment. Then `pay claude` writes a
 # one-paragraph "should you be careful with this" brief. Paid per request in
 # USDC, no API keys.
 #
@@ -94,7 +94,7 @@ synthesize() {
     printf "This token carries serious contract risk: the owner can still mint supply and blacklist holders, and ownership is not renounced. Price is down 8%% on the day with several large outflows, and the top holder controls 41%% of supply. Social chatter is mixed. Treat it as high risk and size accordingly, if at all."
     return 0
   fi
-  pay claude -p "You are a token due-diligence assistant. Given these findings from four sources (JSON: contract audit, market, on-chain flows, social), write one plain-English paragraph on what someone should watch out for before buying. No preamble, no markdown. Findings: ${combined}" \
+  pay claude -p "You are a token due-diligence assistant. Given these findings from four sources (JSON: contract audit, market, onchain flows, social), write one plain-English paragraph on what someone should watch out for before buying. No preamble, no markdown. Findings: ${combined}" \
     2>/dev/null | tr '\n' ' ' | sed 's/  */ /g; s/ *$//' || true
 }
 

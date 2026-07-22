@@ -5,7 +5,7 @@
 Ask a question in plain English. The agent picks a tool, pays for it, and answers.
 
 This is the full agent loop in one script. `pay claude` reads your question and
-decides which on-chain data source to use, the script fetches it through
+decides which onchain data source to use, the script fetches it through
 [pay.sh](https://pay.sh) (paid per request in USDC, no API keys), then `pay claude`
 answers using the data. Reason, act, respond.
 

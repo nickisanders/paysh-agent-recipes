@@ -22,7 +22,7 @@ if [ "${LIVE:-0}" = "1" ]; then export DRY_RUN=0; else export DRY_RUN=1; fi
 
 # --- 2. Run it and watch the loop --------------------------------------------
 echo
-echo "==> Asking on-chain"
+echo "==> Asking onchain"
 echo
 
 "$SCRIPT_DIR/ask-onchain.sh" 2>/dev/null

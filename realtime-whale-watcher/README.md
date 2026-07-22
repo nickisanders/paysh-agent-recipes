@@ -8,7 +8,7 @@ an alert the instant a whale-sized transfer to/from your wallet lands in a new
 block. Deliver it via Telegram, a webhook, a websocket, or stdout — you're not
 locked into any one channel.
 
-It reads on-chain data through [pay.sh](https://pay.sh)'s pay-per-request
+It reads onchain data through [pay.sh](https://pay.sh)'s pay-per-request
 JSON-RPC (no API keys), so you still pay only for the calls you make. Works across
 EVM chains and Solana — pick with one env var (`NETWORK`).
 

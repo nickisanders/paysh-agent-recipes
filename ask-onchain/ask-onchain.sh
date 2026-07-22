@@ -4,7 +4,7 @@
 # for it, and answers.
 #
 # This is the full agent loop in one script: `pay claude` reads your question and
-# decides which on-chain data source to use, the script fetches it through pay.sh
+# decides which onchain data source to use, the script fetches it through pay.sh
 # (paid per request in USDC, no API keys), then `pay claude` answers using the
 # data. Reason, act, respond.
 #
@@ -89,7 +89,7 @@ plan() {
     esac
     return 0
   fi
-  local prompt="You are an on-chain assistant with these tools:
+  local prompt="You are an onchain assistant with these tools:
 ${TOOLS}
 Pick the single best tool for the user's question and its arguments. Respond with
 ONLY JSON: {\"tool\":\"<name>\",\"args\":{...}}. No prose. Question: ${QUESTION}"
