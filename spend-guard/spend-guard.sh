@@ -82,9 +82,7 @@ fi
 
 # --- Approved: run the call, then record the spend ---------------------------
 rc=0
-if [ "$DRY_RUN" = "1" ]; then
-  log "approved: ${host:-local} $(usd "$GUARD_CALL_USD")  [dry run, not executed]"
-else
+if [ "$DRY_RUN" != "1" ]; then
   "$@"
   rc=$?
 fi
@@ -94,7 +92,8 @@ fi
 if [ "$rc" -eq 0 ]; then
   printf '%s %s %s\n' "$GUARD_CALL_USD" "${host:-local}" "$(date +%H:%M:%S)" >> "$LEDGER"
   new_today="$(awk '{s+=$1} END{printf "%.4f", s+0}' "$LEDGER")"
-  log "spent $(usd "$GUARD_CALL_USD") on ${host:-local}. Today: \$${new_today} / $(usd "$GUARD_DAILY_CAP_USD")."
+  verb="spent"; [ "$DRY_RUN" = "1" ] && verb="would spend"
+  log "$verb $(usd "$GUARD_CALL_USD") on ${host:-local}. Today: \$${new_today} / $(usd "$GUARD_DAILY_CAP_USD")."
 else
   log "call failed (exit $rc), not charged."
 fi

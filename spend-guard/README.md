@@ -1,5 +1,7 @@
 # 🛡️ Spend Guard
 
+![Spend Guard demo](demo.gif)
+
 A spending cap for agents that pay their own way.
 
 Autonomous agents paying per request is the whole point of this library. The
