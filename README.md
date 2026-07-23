@@ -38,6 +38,12 @@ run.
 | [📑 Web Extractor](./web-extractor) | Turns any web page into structured JSON for the fields you name (URL in, typed JSON out) | pay.sh structured extract · URL → JSON | _soon_ |
 | [🏢 Company Dossier](./company-dossier) | One domain in, a one-page company brief out: orchestrates enrichment + recent news into a synthesized summary | pay.sh (enrichment + search) + pay claude · orchestration | _soon_ |
 
+### 🛡️ Guardrails
+
+| Recipe | What it does | Stack | Thread |
+|---|---|---|---|
+| [🛡️ Spend Guard](./spend-guard) | A spending cap for agents: wrap any `pay` call to enforce per-call + daily USD caps and an endpoint allowlist, with a ledger of every spend | wrapper · policy + ledger | _soon_ |
+
 _More recipes coming — PRs welcome._
 
 ## How these work
