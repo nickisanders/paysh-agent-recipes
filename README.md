@@ -43,6 +43,7 @@ run.
 | Recipe | What it does | Stack | Thread |
 |---|---|---|---|
 | [🛡️ Spend Guard](./spend-guard) | A spending cap for agents: wrap any `pay` call to enforce per-call + daily USD caps and an endpoint allowlist, with a ledger of every spend | wrapper · policy + ledger | _soon_ |
+| [✋ Approval Gate](./approval-gate) | Human in the loop for big spends: wrap an action tagged with its USD value; over your limit it pauses for a terminal or Telegram yes/no before running | wrapper · human-in-the-loop | _soon_ |
 
 _More recipes coming — PRs welcome._
 
