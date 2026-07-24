@@ -44,6 +44,7 @@ run.
 |---|---|---|---|
 | [🛡️ Spend Guard](./spend-guard) | A spending cap for agents: wrap any `pay` call to enforce per-call + daily USD caps and an endpoint allowlist, with a ledger of every spend | wrapper · policy + ledger | _soon_ |
 | [✋ Approval Gate](./approval-gate) | Human in the loop for big spends: wrap an action tagged with its USD value; over your limit it pauses for a terminal or Telegram yes/no before running | wrapper · human-in-the-loop | _soon_ |
+| [🚦 Rate Limiter](./rate-limiter) | A circuit breaker: wrap any `pay` call to allow N calls per time window, then trip, so a runaway loop can't hammer paid endpoints | wrapper · sliding window | _soon_ |
 
 _More recipes coming — PRs welcome._
 
