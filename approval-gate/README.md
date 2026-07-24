@@ -1,5 +1,7 @@
 # ✋ Approval Gate
 
+![Approval Gate demo](demo.gif)
+
 Human in the loop for an agent's big spends.
 
 Wrap an action that moves money and tag its USD value. Below your limit the agent
