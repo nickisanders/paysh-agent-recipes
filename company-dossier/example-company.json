@@ -1,7 +1,7 @@
 {
   "enrichment": {
-    "name": "Stripe",
-    "domain": "stripe.com",
+    "name": "Acme Payments",
+    "domain": "acmepay.example",
     "industry": "Payments",
     "employees": "8000",
     "location": "San Francisco, US",
@@ -9,12 +9,12 @@
   },
   "news": [
     {
-      "title": "Stripe expands stablecoin payments to 100+ countries",
-      "url": "https://techcrunch.com/2026/stripe-stablecoin-payments"
+      "title": "Acme Payments expands stablecoin payouts to 100+ countries",
+      "url": "https://news.example.com/acmepay-stablecoin-payouts"
     },
     {
-      "title": "Stripe valuation climbs in latest employee tender offer",
-      "url": "https://www.reuters.com/technology/stripe-tender-2026"
+      "title": "Acme Payments raises a new funding round",
+      "url": "https://press.example.com/acmepay-funding-round"
     }
   ]
 }

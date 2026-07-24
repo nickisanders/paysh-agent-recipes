@@ -90,7 +90,7 @@ fetch_news() {
 synthesize() {
   local combined="$1"
   if [ "$DRY_RUN" = "1" ]; then
-    printf "Stripe is the default payments layer for internet businesses and is leaning hard into stablecoins, just expanding USDC-style payments to 100+ countries. With a rising private valuation and deep merchant reach, they are positioning as core infrastructure for agent and onchain commerce, not just cards."
+    printf "Acme Payments is a payment processor for internet businesses, leaning hard into stablecoins and just expanding USDC-style payouts to 100+ countries. With a fresh funding round and broad merchant reach, they are positioning as core infrastructure for agent and onchain commerce, not just cards."
     return 0
   fi
   pay claude -p "You are a business research assistant. Given these findings (JSON: firmographics + recent news) for a company, write one plain-English paragraph a salesperson or partner could use: what they do, what's notable right now, and a one-line take. No preamble, no markdown. Findings: ${combined}" \

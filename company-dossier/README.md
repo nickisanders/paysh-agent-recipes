@@ -35,16 +35,16 @@ DRY_RUN=1 ./company-dossier.sh
 Builds a brief from the canned [`example-company.json`](./example-company.json):
 
 ```
-🏢 Company Dossier: Stripe (stripe.com)
+🏢 Company Dossier: Acme Payments (acmepay.example)
 Payments · ~8000 employees · San Francisco, US
 
-Stripe is the default payments layer for internet businesses and is leaning hard
-into stablecoins... positioning as core infrastructure for agent and onchain
-commerce, not just cards.
+Acme Payments is a payment processor for internet businesses, leaning hard into
+stablecoins... positioning as core infrastructure for agent and onchain commerce,
+not just cards.
 
 Recent:
-  • Stripe expands stablecoin payments to 100+ countries (techcrunch.com)
-  • Stripe valuation climbs in latest employee tender offer (reuters.com)
+  • Acme Payments expands stablecoin payouts to 100+ countries (news.example.com)
+  • Acme Payments raises a new funding round (press.example.com)
 ```
 
 No `pay`, no network.
@@ -52,15 +52,15 @@ No `pay`, no network.
 ## How to run
 
 ```bash
-DOMAIN=stripe.com ./company-dossier.sh
+DOMAIN=acme.com ./company-dossier.sh
 # or pass it as an argument:
-./company-dossier.sh stripe.com
+./company-dossier.sh acme.com
 ```
 
 Non-stdout sinks emit a JSON payload with enrichment + news, for agents:
 
 ```json
-{"type":"company_dossier","domain":"stripe.com","name":"Stripe","synthesis":"…",
+{"type":"company_dossier","domain":"acmepay.example","name":"Acme Payments","synthesis":"…",
  "enrichment":{…},"news":[{"title":"…","url":"…"}],"text":"🏢 …"}
 ```
 
