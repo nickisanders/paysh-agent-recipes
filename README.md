@@ -38,6 +38,7 @@ run.
 | [📣 Brand Radar](./brand-radar) | Tracks mentions of a keyword/brand/token across Reddit and more, alerts on new ones with an optional pay claude sentiment read | pay.sh social data + pay claude · cron | _soon_ |
 | [📑 Web Extractor](./web-extractor) | Turns any web page into structured JSON for the fields you name (URL in, typed JSON out) | pay.sh structured extract · URL → JSON | _soon_ |
 | [🏢 Company Dossier](./company-dossier) | One domain in, a one-page company brief out: orchestrates enrichment + recent news into a synthesized summary | pay.sh (enrichment + search) + pay claude · orchestration | _soon_ |
+| [🔎 Semantic Search](./semantic-search) | Search a corpus by meaning, not keywords: embeds your query and docs via pay.sh (Vertex AI), ranks by cosine similarity. The building block for agent memory and RAG | pay.sh embeddings · cosine rank | _soon_ |
 
 ### 🛡️ Guardrails
 
