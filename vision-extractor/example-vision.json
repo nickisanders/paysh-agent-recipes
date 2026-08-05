@@ -1,0 +1,11 @@
+{
+  "result": {
+    "merchant": "Corner Cafe",
+    "date": "2026-07-14",
+    "total": 18.40,
+    "currency": "USD",
+    "items": ["Latte", "Croissant", "Sparkling water"],
+    "tax": 1.40,
+    "payment_method": "card"
+  }
+}
